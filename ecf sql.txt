@@ -1,0 +1,142 @@
+2.1
+customers = cette table regroupe tout les clients elle est en lien avec :
+- orders via customerNumber
+- payments via customerNumber
+
+employees = cette table regroupe tout les employer de l'entreprise elle est en lien avec:
+- offices via officeCode
+
+
+offices = cette table regroupe les informations des entreprises elle est en lien avec :
+- employees via officeCode
+- customers via PostalCode, phone et city
+
+orderdetail = cette table regroupe tout les commande passer avec les quantité et le numéro de commande elle est en lien avec:
+- orders via orderNumber
+- products via productCode
+
+orders = cette table regroupe toutes les commandes passer avec les date et qui les a commander elle est en lien avec :
+-customers via customerNumber
+-orderDetail via orderNumber
+
+payments =  cette table regrouppe les payment efféctuer par les client ainsi que la date elle est en lien avec:
+-customers via customerNumber
+
+productlines = cette table regroupe les types de véhicule en vente elle est en lien avec :
+-products via productLine
+
+products = cette table regroupe les modèle de véhicule avec leur stock elle est en lien avec:
+-orderDetail via productCode
+- productlines via productLine
+
+2.2
+
+customers:
+customerNumber = decimal(11.0) not null clé primaire
+customerName varchar 50 not null
+contact Last name varchar  50 not null
+pareil pour first name
+phone varchar 50 not null
+adressLine1 varchar 50 not ull
+adressLine2 varvhar 50 NULL
+city varchar 50 not null
+state varchar 50  null
+postalCode varchar 15  null
+country varchar 50 not null
+salesRepEmployeeNumber decimal 11.0  null clé étrangère
+creditLimit decimal 10.2 null
+
+offices:
+officeCode varchar 10 not null clé primaire 
+city varchar 50 not null
+phone varchar 50 not null
+adressLine1 varchar 50 not null
+adressLine2 varchar 50 NULL
+state varchar 50 NULL
+country varchar 50 not null
+postalCode varchar 15 not null
+territory varchar 10 not null
+
+
+3.1
+
+1) select * from customers ;
+select * from offices;
+select* from employees;
+select* from orders;
+select * from products;
+select * from payments;
+
+
+2) select productName from products;
+WHERE productName like 'Harley%'
+order by quantityInStock desc;
+
+3) select customerName from customers;
+WHERE customerName like '_a%'
+order by customerName asc ;
+
+4)select COUNT(customerName) as total from customers;
+WHERE customerName like '_a%'
+order by customerName asc ;
+
+
+5) select productName as 'les articles', buyPrice as 'les prix' FROM products;
+WHERE buyPrice BETWEEN 50 and 65 ;
+
+6)SELECT sum(amount) as 'Total [07/2004]' from payments;
+WHERE paymentDate BETWEEN '2004/07/01' and '2004/07/31';
+
+
+	/* j'ai eu du mal a comprendre l'énonncer et a savoir ce que je dois sélectionner */
+7) SELECT *, COUNT(quantityOrdered) FROM orderdetails;
+WHERE quantityOrdered > 50 or quantityOrdered = 50;
+GROUP BY orderNumber ;
+
+
+	/* on me revois que les clients on tous fait au mois 1 commande */
+8) SELECT customerName from customers;
+INNER JOIN payments ON customers.customerNumber = payments.customerNumber;
+WHERE paymentDate IS null;
+order BY customerName ASC ;
+
+
+	/* pareil on me renvoi qu'il ont tous un poste */
+9) select lastName, firstName, employeeNumber, jobTitle from employees;
+WHERE officeCode = 0 ;
+
+
+	/* la réponse est 95 */
+10) SELECT COUNT(DISTINCT city) from customers;
+
+
+	/* l'énonncer n'est pas clair, je ne sais pas si c'est fait exprés */
+11) SELECT customerName, sum(amount) as total from customers;
+INNER JOIN payments ON customers.customerNumber = payments.customerNumber;
+GROUP by customerName;
+order BY total desc;
+
+	
+
+	/* sa commence a être très compliqué */
+12) SELECT quantityOrdered,sum(quantityOrdered) as totale , productLine	FROM products;
+INNER join orderdetails ON products.productCode = orderdetails.productCode;
+INNER JOIN orders on orderdetails.orderNumber = orders.orderNumber;
+WHERE orderDate >= '2005/01/01' ;
+GROUP by quantityOrdered;
+order BY productLine asc;
+
+
+	/* compliqué également */
+13) SELECT customerName, orderDate, orders.status, contactLastName, contactFirstName, orders.customerNumber, quantityOrdered, orderdetails.orderNumber from customers ;
+INNER JOIN orders on customers.customerNumber = orders.customerNumber;
+INNER JOIN orderdetails on orders.orderNumber = orderdetails.orderNumber ;
+
+	/* j'ai tenter un truc c'est beaucoup trop compliqué pour moi ^^ je reviendrai peut être dessus */
+14) SELECT customerName, offices.city, offices.country, lastName, firstName, jobTitle, orders.orderNumber, quantityOrdered, productLine, buyPrice  FROM customers;
+INNER JOIN orders ON customers.customerNumber = orders.orderNumber;
+INNER JOIN orderdetails on orders.orderNumber = orderdetails.orderNumber;
+INNER JOIN offices on customers.postalCode = offices.postalCode;
+INNER JOIN employees on offices.officeCode = employees.officeCode;
+INNER JOIN products on orderdetails.productCode = products.productCode;
+
