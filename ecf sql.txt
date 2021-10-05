@@ -134,7 +134,7 @@ INNER JOIN orderdetails on orders.orderNumber = orderdetails.orderNumber ;
 
 	/* j'ai tenter un truc c'est beaucoup trop compliqué pour moi ^^ je reviendrai peut être dessus */
 14) SELECT customerName, offices.city, offices.country, lastName, firstName, jobTitle, orders.orderNumber, quantityOrdered, productLine, buyPrice  FROM customers
-INNER JOIN orders ON customers.customerNumber = orders.orderNumber
+INNER JOIN orders ON customers.customerNumber = orders.customerNumber
 INNER JOIN orderdetails on orders.orderNumber = orderdetails.orderNumber
 INNER JOIN offices on customers.postalCode = offices.postalCode
 INNER JOIN employees on offices.officeCode = employees.officeCode
